@@ -651,8 +651,15 @@ if(BUILD_TOOLS)
     gencnval gencfu makeconv genbrk gensprep gendict icupkg genrb)
 
   if(CMAKE_SYSTEM_NAME STREQUAL Windows)
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES AMD64)
+      set(_ARCH_ARGUMENTS -u X64)
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES ARM64)
+      set(_ARCH_ARGUMENTS -u ARM64)
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES ARM)
+      set(_ARCH_ARGUMENTS -u ARM)
+    endif()
     add_custom_target(icudata ALL
-      COMMAND $<TARGET_FILE:pkgdata> -f -e ${U_ICUDATA_NAME} -v -m dll -c -p ${U_ICUDATA_PKGN} -T ${CMAKE_CURRENT_BINARY_DIR}/data/tmp -L ${U_ICUDATA_NAME} -d ${CMAKE_CURRENT_BINARY_DIR}/data/${U_ICUDATA_PKGN} -s . ${CMAKE_CURRENT_BINARY_DIR}/data/tmp/icudata.lst
+      COMMAND $<TARGET_FILE:pkgdata> -f -e ${U_ICUDATA_NAME} -v -m dll -c -p ${U_ICUDATA_PKGN} -T ${CMAKE_CURRENT_BINARY_DIR}/data/tmp -L ${U_ICUDATA_NAME} -d ${CMAKE_CURRENT_BINARY_DIR}/data/${U_ICUDATA_PKGN} -s . ${_ARCH_ARGUMENTS} ${CMAKE_CURRENT_BINARY_DIR}/data/tmp/icudata.lst
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/data/${U_ICUDATA_PKGN})
     add_dependencies(icudata pkgdata icudata_lst)
 
